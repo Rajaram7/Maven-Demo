@@ -1,15 +1,23 @@
 pipeline {
-agent any
-stages {
-stage ('scm'){
-steps {git 'https://github.com/pandian3k/Maven-Demo.git'}
+    agent any
+
+    stages {
+        stage('Code') {
+            steps {
+                git 'https://github.com/Rajaram7/Maven-Demo.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh '''mvn clean'''
+                sh '''mvn install'''
+            }
+        }
+        stage('Deploy') {
+            steps {
+                sh 'cp -rp "/var/lib/jenkins/workspace/demo-pipeline/multi-module/webapp/target/webapp.war"  "/opt/apache-tomcat/webapps"'
+            }
+        }
+    }
 }
-stage ('Build'){
-steps {bat label: '', script: 'mvn clean'
-   bat label: '', script: 'mvn install'}
-}
-stage ('Deployment'){
-steps {bat label: '', script: 'xcopy /y "C:\\Program Files (x86)\\Jenkins\\workspace\\demo-pro\\multi-module\\webapp\\target\\webapp.war" "C:\\Program Files\\Apache Software Foundation\\Tomcat 8.5\\webapps"'}
-}
-}
-}
+
